@@ -1,0 +1,65 @@
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script>
+     io = io.connect('http://localhost:3000');
+     $(document).ready(function(){
+      $('#button').click(function(){
+        var name = $('#name').val();
+        var location = $('#location').val();
+        var language = $('#language').val();
+        var comments = $('#comments').val();
+        var results = {name: name, location: location, language: language, comments: comments};
+        console.log(results);
+        io.emit('post_form', results);
+      })
+
+      io.on('updated_message', function(message){
+        $('#head').append("<div class='top'>"+message+"</div>");
+      })
+
+      io.on('random_number', function(random){
+        $('#head').append("<div class='top'>"+ random + "</div>");
+      })
+     })
+
+    </script>
+  </head>
+  <body>
+    <div id='head'>
+    </div>
+    
+    <h1>Submitting Form</h1>
+
+  <% if(session_data.name)
+       { %>
+         <%= "Name: " + session_data.name %> <br>
+         <%= "Location: " + session_data.location %> <br>
+         <%= "Language: " + session_data.language %> <br>
+         <%= "Comments: " + session_data.comments %> <br>
+    <% } %> 
+
+    
+      <b>Name: </b><input id='name' type="text" name="name" placeholder="Name" /><br>
+      <b>Location: </b><select id='location' name='location'>
+      	<option value='Mountain View'>Mountain View</option>
+      	<option value='Bellevue'>Bellevue</option>
+      </select><br>
+      <b>Language: </b><select id='language' name='language'>
+      	<option value='PHP'>PHP</option>
+      	<option value='Javascript'>Javascript</option>
+      	<option value='Ruby'>Ruby</option>
+      	<option value='Python'>Python</option>
+      	<option value='NodeJS'>NodeJS</option>
+      	<option value='Seasharp'>Seasharp</option>
+      	<option value='Perl'>Perl</option>
+      </select><br>
+      <b>Comments (Optional):</b><br>
+      <textarea id='comments' name='comments' rows="4" cols="30"></textarea><br>
+      <button id ='button'>Submit</button>
+    
+  </body>
+</html>
